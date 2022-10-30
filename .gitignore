@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-model/train/data/
+model/training/data/*.csv
 model/app/modules/test_model/
 model/artifacts/test_*.joblib
 __pycache__/

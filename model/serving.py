@@ -11,6 +11,8 @@ from uvicorn.config import LOGGING_CONFIG
 from fastapi import FastAPI, Request
 from app.main_routers import add_all_routers
 from app.base.config import settings
+# from app.base.monitoring import instrumentator
+from starlette_prometheus import metrics, PrometheusMiddleware
 
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -26,6 +28,8 @@ app = FastAPI(
 )
 
 add_all_routers(app)
+app.add_middleware(PrometheusMiddleware)
+app.add_route("/metrics", metrics)
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -42,8 +46,8 @@ async def startup():
 
 
 
-from multiprocessing import Process
-import subprocess
+# from multiprocessing import Process
+# import subprocess
 
 # def run_celery():
 #     # subprocess.run('celery -A app.worker.celery_app worker -l INFO -c {}'.format(settings.NUMBER_OF_WORKER), shell=True)
