@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    build: ./model
+    build: ./serving
     restart: unless-stopped
     container_name: app
     ports:
@@ -43,7 +43,7 @@ services:
         ipv4_address: 172.16.238.12
 
   locust:
-    build: ./simulation
+    build: ./testing
     restart: unless-stopped
     container_name: locust
     ports:
@@ -51,6 +51,55 @@ services:
     networks:
       example-network:
         ipv4_address: 172.16.238.13
+
+  mysql:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      example-network:
+        ipv4_address: 172.16.238.14
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PWD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PWD}
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mlflow:
+    restart: always
+    build: ./training
+    image: atcommons/mlflow-server
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./data:/mlflow"
+    networks:
+      example-network:
+        ipv4_address: 172.16.238.15
+
+  # nginx:
+  #   restart: always
+  #   build: ./nginx
+  #   image: mlflow_nginx
+  #   container_name: mlflow_nginx
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     - frontend
+  #   depends_on:
+  #     - web
+
+volumes:
+  db:
+    driver: local
 
 networks:
   example-network:

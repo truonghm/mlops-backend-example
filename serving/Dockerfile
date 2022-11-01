@@ -5,4 +5,4 @@ WORKDIR /pf/
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-CMD [ "python", "model/run_app.py" ]
+CMD [ "python", "serving/main.py" ]
