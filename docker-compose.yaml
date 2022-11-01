@@ -43,7 +43,7 @@ services:
         ipv4_address: 172.16.238.12
 
   locust:
-    build: ./testing
+    build: ./simulation
     restart: unless-stopped
     container_name: locust
     ports:
