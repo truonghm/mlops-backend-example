@@ -2,6 +2,9 @@
 database/raw_data/*.csv
 serving/app/modules/test_model/
 training/artifacts/*
+training/mlruns/*
+training/modules/test/*
+test/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
