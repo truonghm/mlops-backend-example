@@ -57,6 +57,25 @@ docker-compose up
 
 ### Model development
 
+### Model registry
+
+MLflow
+```
+mlflow server --backend-store-uri=sqlite:///artifacts.db --default-artifact-root=file:training/mlruns --host 0.0.0.0 --port 5000
+```
+
+Feast
+
+### ETL
+
+Database
+
+
+Airflow
+```
+
+```
+
 ### Model serving
 
 #### API
@@ -64,3 +83,22 @@ docker-compose up
 #### Monitoring
 
 #### Testing
+
+
+TO-DO:
+
+[X] Build skeleton (FastAPI + Grafana + Prometheus)
+[X] Dockerize
+[X] Add MLflow
+[X] Add MySQL
+[ ] Add Airflow
+[ ] Add quality-of-life features: 
+    [ ] Automatically add datasource and dashboard for Grafana at build
+    [ ] Feature store (Feast)
+    [X] Simulation for API endpoint (Locust)
+    [ ] Unit testing
+    [ ] Improve `.env`
+[ ] Write documentation
+    [ ] Set-up and how-to-use
+	[ ] Doc for API endpoint
+    [ ] System architecture
