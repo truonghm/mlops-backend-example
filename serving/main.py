@@ -66,7 +66,7 @@ if __name__ == "__main__":
     LOGGING_CONFIG["formatters"]["access"]["fmt"] = '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
     LOGGING_CONFIG["formatters"]["access"]["datefmt"] = '%Y-%m-%d %H:%M:%S'
 
-    uvicorn.run("run_api:app"
+    uvicorn.run("main:app"
                 ,host= settings.API_HOST_DOMAIN
                 ,port= settings.API_HOST_PORT
                 ,reload = settings.RELOAD_CODE

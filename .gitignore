@@ -1,7 +1,9 @@
+# Project-specific files
+training/dev/data/*.csv
+serving/app/modules/test_model/
+training/artifacts/test_*.joblib
+
 # Byte-compiled / optimized / DLL files
-model/training/data/*.csv
-model/app/modules/test_model/
-model/artifacts/test_*.joblib
 __pycache__/
 *.py[cod]
 *$py.class
