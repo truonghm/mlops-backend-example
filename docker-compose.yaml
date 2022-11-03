@@ -5,11 +5,21 @@ services:
     build: ./serving
     restart: unless-stopped
     container_name: app
+    env_file:
+      - .env
     ports:
       - 8000:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8000"]
+    volumes:
+      - ./training/artifacts:/pf/artifacts/
+    depends_on:
+      mlflow:
+        condition: service_started
+      mysql:
+        condition: service_started
     networks:
-      example-network:
-        ipv4_address: 172.16.238.10
+      pf-backend:
 
   prometheus:
     image: prom/prometheus:latest
@@ -17,13 +27,17 @@ services:
     container_name: prometheus
     ports:
       - 9090:9090
+    depends_on:
+      app:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:9090"]
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
     networks:
-      example-network:
-        ipv4_address: 172.16.238.11
+      pf-backend:
 
   grafana:
     image: grafana/grafana:latest
@@ -35,22 +49,22 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./monitoring/grafana/datasource.yml:/etc/grafana/provisioning/datasource.yml
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards/
     env_file:
       - ./monitoring/grafana/config.monitoring
     networks:
-      example-network:
-        ipv4_address: 172.16.238.12
+      pf-backend:
 
-  locust:
-    build: ./simulation
-    restart: unless-stopped
-    container_name: locust
-    ports:
-      - 8089:8089
-    networks:
-      example-network:
-        ipv4_address: 172.16.238.13
+  # locust:
+  #   build: ./simulation
+  #   restart: unless-stopped
+  #   container_name: locust
+  #   ports:
+  #     - 8089:8089
+  #   networks:
+  #     pf-backend:
+  #       ipv4_address: 172.16.238.13
 
   mysql:
     image: mysql:8.0
@@ -61,51 +75,68 @@ services:
     ports:
       - "3306:3306"
     networks:
-      example-network:
-        ipv4_address: 172.16.238.14
+      pf-backend:
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
+    # env_file:
+    #   - .env
     environment:
       - MYSQL_DATABASE=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PWD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PWD}
     volumes:
-      - db:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_db:/var/lib/mysql
 
   mlflow:
     restart: always
     build: ./training
     image: atcommons/mlflow-server
     container_name: mlflow
+    env_file:
+      - .env
     ports:
       - "5000:5000"
-    volumes:
-      - "./data:/mlflow"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:5000"]
+    depends_on:
+      mysql_mlflow:
+        condition: service_healthy
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri mysql+pymysql://${MYSQL_MLFLOW_USER}:${MYSQL_MLFLOW_PWD}@mysql_mlflow:3306/${MYSQL_MLFLOW_DB} --default-artifact-root ${MLFLOW_ARTIFACT_ROOT}
+    # command: mlflow server --backend-store-uri=sqlite:///artifacts.db --default-artifact-root=file:training/artifacts --host 0.0.0.0 --port 5000
     networks:
-      example-network:
-        ipv4_address: 172.16.238.15
+      pf-backend:
 
-  # nginx:
-  #   restart: always
-  #   build: ./nginx
-  #   image: mlflow_nginx
-  #   container_name: mlflow_nginx
-  #   ports:
-  #     - "80:80"
-  #   networks:
-  #     - frontend
-  #   depends_on:
-  #     - web
+  mysql_mlflow:
+    image: mysql:8.0
+    container_name: mysql_mlflow
+    # env_file:
+    #   - .env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_MLFLOW_DB}
+      - MYSQL_USER=${MYSQL_MLFLOW_USER}
+      - MYSQL_PASSWORD=${MYSQL_MLFLOW_PWD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_MLFLOW_ROOT_PWD}
+    # ports:
+    #   - "3306:3306"
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
+    restart: always
+    volumes:
+      - mysql_mlflow_db:/var/lib/mysql
+    cap_add:
+      - SYS_NICE
+    networks:
+      pf-backend:
 
 volumes:
-  db:
-    driver: local
+  mysql_db:
+  mysql_mlflow_db:
 
 networks:
-  example-network:
-    name: example-network
+  pf-backend:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.238.0/24

@@ -17,4 +17,6 @@ matplotlib
 seaborn
 pymysql
 mlflow
+cryptography
 pendulum
+xgboost==1.6.2

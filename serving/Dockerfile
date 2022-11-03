@@ -5,4 +5,4 @@ WORKDIR /pf/
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-CMD [ "python", "serving/main.py" ]
+CMD [ "python", "main.py" ]

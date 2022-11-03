@@ -1,9 +1,9 @@
 # Project-specific files
-database/raw_data/*.csv
+database/*
 serving/app/modules/test_model/
 training/artifacts/*
-training/mlruns/*
-training/modules/test/*
+training/test_*.*
+training/data/*
 test/*
 
 # Byte-compiled / optimized / DLL files

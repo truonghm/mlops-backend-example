@@ -6,17 +6,24 @@ from joblib import load
 import numpy as np
 from pathlib import Path
 
-# from . import actions, models, schemas
+import pymysql
+import cryptography
+import pandas as pd
+from sqlalchemy import text
 
-# from app.modules.users import schemas as user_schemas
-# from app.modules.users import actions as user_actions
-# from app.base.databases import get_db, get_read_db
-# from app.base.config import settings
-
-# from .schemas import Wine, Rating, feature_names
+from app.base.config import settings
+from app.base.db import SessionLocal, engine
 
 router = APIRouter()
 
 @router.get("/ping")
 async def healthcheck():
-    return "pong"
+    return {"ping": "pong"}
+
+@router.get("/get_db_version")
+async def get_db_status():
+
+    db = SessionLocal()
+    version = db.execute(text('SELECT VERSION()')).fetchone()
+
+    return {"table_list": {version[0]}}
