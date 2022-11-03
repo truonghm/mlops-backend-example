@@ -1,7 +1,6 @@
 # Back-end Demo for Quantity Prediction Model (Pod Foods)
 
 
-
 ## Setting up
 
 ### Prerequisites
@@ -71,9 +70,10 @@ python preprocess.py && python train.py
 #### API information
 
 | API info        | Detail |
-|-----------------|--------|
+| --------------- | ------ |
 | Response format | JSON   |
 | Authentication  | No     |
+| Method          | POST   |
 
 #### Parameters
 
