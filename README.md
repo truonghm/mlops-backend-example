@@ -31,6 +31,8 @@ conda activate pf
 pip install -r requirements.txt
 ```
 
+4. Create the environment variable file: Simply rename the `.env.example` file to `.env`. 
+
 ## Usage
 
 
