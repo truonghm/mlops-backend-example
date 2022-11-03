@@ -87,15 +87,15 @@ Airflow
 
 TO-DO:
 
-[X] Build skeleton (FastAPI + Grafana + Prometheus)  
-[X] Dockerize  
-[X] Add MLflow  
-[X] Add MySQL  
+[x] Build skeleton (FastAPI + Grafana + Prometheus)  
+[x] Dockerize  
+[x] Add MLflow  
+[x] Add MySQL  
 [ ] Add Airflow  
 [ ] Add quality-of-life features:    
     [ ] Automatically add datasource and dashboard for Grafana at build  
     [ ] Feature store (Feast)  
-    [X] Simulation for API endpoint (Locust)  
+    [x] Simulation for API endpoint (Locust)  
     [ ] Unit testing  
     [ ] Improve `.env`  
 [ ] Write documentation  
