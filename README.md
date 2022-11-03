@@ -8,52 +8,111 @@
 
 You will need:
 
-1. python (required): The score services can be started without Docker, so Python is enough.
-2. docker and docker-compose (optional, but preferable): Use docker for a better experience.
+1. python (3.8): install with [miniconda](https://docs.conda.io/en/main/miniconda.html) or [the official release](https://www.python.org/downloads/release/python-380/)
+2. [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
 
-### Without Docker
+### Installation
 
-Deploying without Docker will be limited, as Grafana and Prometheus are not completely usable. However, the API and simulation should still work.
+1. Clone this repository:
+```
+git clone git@github.com:truonghm/pf-backend.git
+cd pf-backend
+```
 
-A new Python environment should be created for isolation. If you use conda, you can use the following commands:
+2. Create a new Python environment for isolation. If you use `conda`, you can use the following commands:
 
 ```
-# note that I use Python 3.8 here
 conda create --name pf python=3.8
 conda activate pf
 ```
 
-Next, install the neccessary packages:
-
+3. Next, install the neccessary packages:
 ```
 pip install -r requirements.txt
 ```
 
-Start the back-end services:
+## Usage
 
-1. FastAPI
 
-```bash
-python model/serving.py
-```
-
-2. Locust (for simulation, optional)
-
-```bash
-locust -f simulation/locustfile.py --host http://127.0.0.1:8000
-```
-
-### With Docker & Docker Compose
-
-Simply run:
+1. To start the serivces, run:
 
 ```bash
 docker-compose up
 ```
 
-## Usage
+2. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the `training/data` folder). I do not upload these files to Github as they are (supposely) confidential.
+
+3. To prepare data and train model, run:
+
+```bash
+cd training
+python preprocess.py && python train.py
+```
+
+4. Access the services with:
+    - API docs: [localhost:8000/documentation](localhost:8000/documentation)
+    - MLFlow: [localhost:5000](localhost:5000)
+    - Prometheus: [localhost:9090](localhost:9090)
+    - Grafana: [localhost:3000](localhost:3000)
+    - Airflow: TBU
 
 ### System architecture
+
+[Insert picture here]
+
+### API documentation
+
+#### Endpoint URL
+
+> http://127.0.0.1:8000/quantity/predict
+
+#### API information
+
+| API info        | Detail |
+|-----------------|--------|
+| Response format | JSON   |
+| Authentication  | No     |
+
+#### Parameters
+
+#### Example Requests
+
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/quantity/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "input": [
+    {
+      "store_id": 55,
+      "product_id": 1866
+    },
+    {
+      "store_id": 55,
+      "product_id": 1867
+    },
+    {
+      "store_id": 55,
+      "product_id": 1939
+    }
+  ],
+  "date": "string"
+}'
+```
+
+#### Example Response
+
+```
+{
+  "predictions": [
+    2,
+    3
+  ]
+}
+
+```
+
 
 ### Model development
 
@@ -76,13 +135,10 @@ Airflow
 
 ```
 
-### Model serving
+### Monitoring
 
-#### API
 
-#### Monitoring
-
-#### Testing
+### Testing
 
 
 TO-DO:
