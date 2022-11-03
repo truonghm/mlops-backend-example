@@ -143,7 +143,7 @@ Airflow
 ### Testing
 
 
-TO-DO:
+## Task list
 
 - [x] Build skeleton (FastAPI + Grafana + Prometheus)  
 - [x] Dockerize  
