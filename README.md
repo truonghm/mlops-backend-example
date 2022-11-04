@@ -12,6 +12,7 @@
     + [Monitoring](#monitoring)
     + [Testing](#testing)
   * [Termination](#termination)
+  * [References](#references)
   * [Task list](#task-list)
 
 ## Setting up
@@ -190,7 +191,7 @@ There is also the Jupyter Notebook with more details on model development at [`t
 
 MLFlow UI: [localhost:5000](http://localhost:5000).
 
-MLFLow is used for experiment tracking and as a model store. It is supported by a MySQL db and saves model to a local directory ([`training/artifacts`](training/artifacts)).
+MLFLow is used for experiment tracking and as a model store. It is supported by a MySQL db and saves model to a local directory ([`training/artifacts`](training/artifacts)). In real MLops system this could be a cloud storage (S3 or GCS).
 
 
 ### ETL
@@ -211,6 +212,8 @@ Note that for Linux distributions, the `AIRFLOW_UID` environment variable need t
 docker-compose --file docker-compose-airflow.yaml up
 ```
 
+The is one task available in Airflow: `dag_quantity_model_preprocessing`. The transformation is done in Python (pandas).
+
 Data are stored on a MySQL database (`mysql:3306`) with the following tables:
 - `fact_order_items`, corresponds with the `data_order.csv` file
 - `dim_product`, corresponds with the `data_metadata_product.csv` file
@@ -225,6 +228,8 @@ Data are stored on a MySQL database (`mysql:3306`) with the following tables:
 Note that due to limited time, I only use the stock dashboard (from [here](https://github.com/Kludex/fastapi-prometheus-grafana)) in Grafana with some setting modification. Given more time, a better dashboard that show tailor-made metrics for the model can be built.
 
 The dashboard has already been loaded into Grafana after running Docker Compose. Please go to __Dashboard > Browse > FastAPI Dashboard__ to view the dashboard.
+
+![Grafana](./.assets/grafana.png)
 
 ### Testing
 
@@ -243,6 +248,14 @@ To remove unused images
 ```bash
 docker image prune -a
 ```
+
+## References
+
+1. [Provisioning Grafana](https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards)
+2. [FastAPI + Prometheus + Grafana](https://github.com/Kludex/fastapi-prometheus-grafana)
+3. [MLflow Tracking](https://www.mlflow.org/docs/latest/tracking.html)
+4. [Running Airflow in Docker](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
+
 
 ## Task list
 
