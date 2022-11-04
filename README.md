@@ -90,11 +90,19 @@ The backend system looks something like this:
 
 | API info        | Detail |
 | --------------- | ------ |
+| Method          | POST   |
 | Response format | JSON   |
 | Authentication  | No     |
-| Method          | POST   |
 
-#### Parameters
+
+#### Body Parameters
+
+| Parameter        | Detail                          | Type    | Required? |
+| ---------------- | ------------------------------- | ------- | --------- |
+| input            | List of store and product pairs | list    | Yes       |
+| input.store_id   | ID of store                     | integer | Yes       |
+| input.product_id | ID of product                   | integer | Yes       |
+| date             | Check out date                  | string  | No        |
 
 #### Example Requests
 
@@ -216,5 +224,5 @@ Data are stored on a MySQL database (`mysql:3306`) with the following tables:
     - [ ] Testing  
 - [ ] Write documentation  
     - [X] Set-up and how-to-use  
-	  - [ ] Doc for API endpoint  
+    - [ ] Doc for API endpoint  
     - [X] System architecture  
