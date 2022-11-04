@@ -44,7 +44,7 @@ docker-compose --file docker-compose.yaml up
 ```
 
 __Alternatively__, use `docker-compose-airflow.yaml` to include Airflow in the serivces.
-Note that I don't include Airflow in the main `docker-compose.yaml` file, as Airflow is used for ETL pipelines and not technically a part of this MLops back-end demo. However I still build this for the sake of completeness.
+Note that I don't include Airflow in the main `docker-compose.yaml` file (reason below), however I still build this for the sake of completeness.
 ```bash
 # if you are using a Linux distro, run prepare_airflow.sh first. If not, skip this step
 ./prepare_airflow.sh
@@ -135,27 +135,63 @@ curl -X 'POST' \
 
 ### Model training
 
-Code and specifications related to model training and development are in 
+Folder structure:
+
+```
+training
+├── artifacts
+├── data
+│   ├── data_metadata_product.csv
+│   ├── data_metadata_store.csv
+│   ├── data_order.csv
+│   ├── ...
+├── dev
+│   ├── model.ipynb
+├── preprocess.py
+├── train.py
+```
+To transform data and save it to database:
+```bash
+python preprocess.py
+```
+
+To train the model:
+```bash
+python train.py
+```
+
+There is also the Jupyter Notebook with more details on model development at [`training/dev/model.ipynb`](training/dev/model.ipynb).
 
 #### Model registry
 
 MLFlow UI: [localhost:5000](http://localhost:5000).
 
-MLFLow is used for experiment tracking and as a model store.
-
-#### Model development
-
+MLFLow is used for experiment tracking and as a model store. It is supported by a MySQL db and saves model to a local directory ([`training/artifacts`](training/artifacts)).
 
 
 ### ETL
 
-Database
+I don't include Airflow in the main backend services due to:
+- Size of the Airflow docker images
+- Complexity
+- I want to focus more on the ML size of things while Airflow is for orchestration.
 
+As such, use `docker-compose-airflow.yaml` to include Airflow in the serivces.
+Note that for Linux distributions, the `AIRFLOW_UID` and `AIRFLOW_GID` environment variables need to be specified with the correct values in order for Airflow to have the correct permissions. 
 
-Airflow
+```bash
+# if you are using a Linux distro, run prepare_airflow.sh first. If not, skip this step
+./prepare_airflow.sh
+
+# add -d flag to run in detach mode
+docker-compose --file docker-compose-airflow.yaml up
 ```
 
-```
+Data are stored on a MySQL database (`mysql:3306`) with the following tables:
+- `fact_order_item`, corresponds with the `data_order.csv` file
+- `dim_product`, corresponds with the `data_metadata_product.csv` file
+- `dim_store`, corresponds with the `data_metadata_store.csv` file
+- `features`, featurse after transformation
 
 ### Monitoring
 
@@ -177,6 +213,6 @@ Airflow
     - [ ] Feature store (Feast)  
     - [ ] Testing  
 - [ ] Write documentation  
-    - [ ] Set-up and how-to-use  
-	- [ ] Doc for API endpoint  
-    - [ ] System architecture  
+    - [X] Set-up and how-to-use  
+	  - [ ] Doc for API endpoint  
+    - [X] System architecture  
