@@ -3,7 +3,8 @@ database/*
 serving/app/modules/test_model/
 training/artifacts/*
 training/test_*.*
-training/data/*
+training/data/*.csv
+training/predict.py
 test/*
 etl/logs/*
 etl/keys/*
