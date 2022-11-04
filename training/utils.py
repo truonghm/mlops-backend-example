@@ -7,15 +7,15 @@ from sqlalchemy.orm import sessionmaker
 # from sqlalchemy import MetaData
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv(dotenv_path="local.env")
 
 # connection_string = "sqlite:///database/podfood.db"
 
 DATA_PATH = "data/"
 connection_string = f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PWD')}@{os.getenv('MYSQL_HOST')}:{os.getenv('MYSQL_PORT')}/{os.getenv('MYSQL_DB')}"
 
-engine = create_engine(connection_string, echo=True)
+engine = create_engine(connection_string, max_identifier_length=30, pool_size=2, max_overflow=0)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
@@ -35,14 +35,33 @@ def get_db():
     finally:
         db.close()
 
-def transform_order_data():
+def get_data_csv():
 	order_df = pd.read_csv(DATA_PATH + "data_order.csv", parse_dates=["CHECKOUT_DATE"])
+	product_df = pd.read_csv(DATA_PATH + "data_metadata_product.csv")
+	store_df = pd.read_csv(DATA_PATH + "data_metadata_store.csv")
+
+	return order_df, product_df, store_df
+
+def get_data_db(conn):
+	order_df = pd.read_sql("select order_id, store_id, brand_id, product_id, product_variant_id, quantity, variant_case_price_cents, checkout_date from fact_order_items", conn)
+	order_df['checkout_date'] = pd.to_datetime(order_df['checkout_date'], format="%Y-%m-%d")
+	product_df = pd.read_sql("select product_id, product_metadata from dim_product", conn)
+	store_df = pd.read_sql("select store_id, store_type, region_id, store_size from dim_store", conn)
+
+	order_df.columns = [col.upper() for col in order_df.columns]
+	product_df.columns = [col.upper() for col in product_df.columns]
+	store_df.columns = [col.upper() for col in store_df.columns]
+	
+	return order_df, product_df, store_df
+
+def transform_order_data(order_df):
+	
 	store_product_df = order_df.groupby(['STORE_ID','PRODUCT_ID','CHECKOUT_DATE'],as_index=False)['QUANTITY'].sum()
 
 	return store_product_df
 
-def transform_product_data():
-	product_df = pd.read_csv(DATA_PATH + "data_metadata_product.csv")
+def transform_product_data(product_df):
+	
 
 	product_df['DUP_CNT'] = product_df.groupby('PRODUCT_ID')['PRODUCT_METADATA'].rank(method="first", ascending=True)
 
@@ -91,8 +110,8 @@ def transform_product_data():
 	return product_df
 
 
-def transform_store_data():
-	store_df = pd.read_csv(DATA_PATH + "data_metadata_store.csv")
+def transform_store_data(store_df):
+
 
 	store_df['STORE_TYPE'].fillna('Unknown', inplace=True)
 	store_df['REGION_ID'].fillna(-1, inplace=True)

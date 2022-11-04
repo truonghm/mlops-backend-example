@@ -4,10 +4,13 @@ import logging
 import mlflow
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+import os
 
+from dotenv import load_dotenv
+load_dotenv(dotenv_path="local.env")
 
 logger = logging.getLogger(__name__)
-mlflow.set_tracking_uri("http://0.0.0.0:5000")
+mlflow.set_tracking_uri(f"http://{os.getenv('MLFLOW_HOST')}:{os.getenv('MLFLOW_PORT')}")
 
 def downcast_dtypes(df):
     float_cols = [c for c in df if df[c].dtype == "float64"]

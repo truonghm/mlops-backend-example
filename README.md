@@ -35,27 +35,34 @@ pip install -r requirements.txt
 ## Usage
 
 
-1. To start the serivces, run:
+1. To start the main serivces (FastAPI, Grafana, Prometheus, MLflow, MySQL DB), run:
 
 ```bash
-docker-compose up
+# add -d flag to run in detach mode, not recommended for first time running
+docker-compose --file docker-compose.yaml up
 ```
 
-2. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the `training/data` folder). I do not upload these files to Github as they are (supposely) confidential.
+2. To start Airflow for orchestration, run:
+```bash
+# add -d flag to run in detach mode, not recommended for first time running
+docker-compose --file docker-compose-airflow.yaml up
+```
 
-3. To prepare data and train model, run:
+3. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the `training/data` folder). I do not upload these files to Github as they are (supposely) confidential.
+
+4. To prepare data and train model, run:
 
 ```bash
 cd training
 python preprocess.py && python train.py
 ```
 
-4. Access the services with:
-    - API docs: [localhost:8000/documentation](localhost:8000/documentation)
-    - MLFlow: [localhost:5000](localhost:5000)
-    - Prometheus: [localhost:9090](localhost:9090)
-    - Grafana: [localhost:3000](localhost:3000)
-    - Airflow: TBU
+5. Access the services with:
+    - API docs: [localhost:8000/documentation](http://localhost:8000/documentation)
+    - MLFlow: [localhost:5000](http://localhost:5000)
+    - Prometheus: [localhost:9090](http://localhost:9090)
+    - Grafana: [localhost:3000](http://localhost:3000)
+    - Airflow Webserver: [localhost:8080](http://localhost:8080)
 
 ### System architecture
 
@@ -153,9 +160,7 @@ Airflow
 - [ ] Add quality-of-life features:    
     - [ ] Automatically add datasource and dashboard for Grafana at build  
     - [ ] Feature store (Feast)  
-    - [x] Simulation for API endpoint (Locust)  
-    - [ ] Unit testing  
-    - [ ] Improve `.env`  
+    - [ ] Testing  
 - [ ] Write documentation  
     - [ ] Set-up and how-to-use  
 	- [ ] Doc for API endpoint  

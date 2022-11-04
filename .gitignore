@@ -5,6 +5,9 @@ training/artifacts/*
 training/test_*.*
 training/data/*
 test/*
+etl/logs/*
+etl/keys/*
+etl/plugins/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
