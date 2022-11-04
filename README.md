@@ -9,6 +9,7 @@ You will need:
 
 1. python (3.8): install with [miniconda](https://docs.conda.io/en/main/miniconda.html) or [the official release](https://www.python.org/downloads/release/python-380/)
 2. [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
+3. __Operating System__: I'm using Ubuntu 22.04 LTS to build and test these services, but they should also work on Windows and MacOS, however some of the instructions below might need modification, particularly for Windows (e.g. bash scripts).
 
 ### Installation
 
@@ -18,7 +19,7 @@ git clone git@github.com:truonghm/pf-backend.git
 cd pf-backend
 ```
 
-2. Create a new Python environment for isolation. If you use `conda`, you can use the following commands:
+2. Create a new Python environment for isolation. If you use `conda`, you can run:
 
 ```
 conda create --name pf python=3.8
@@ -38,35 +39,44 @@ pip install -r requirements.txt
 1. To start the main serivces (FastAPI, Grafana, Prometheus, MLflow, MySQL DB), run:
 
 ```bash
-# add -d flag to run in detach mode, not recommended for first time running
+# add -d flag to run in detach mode
 docker-compose --file docker-compose.yaml up
 ```
 
-2. To start Airflow for orchestration, run:
+__Alternatively__, use `docker-compose-airflow.yaml` to include Airflow in the serivces.
+Note that I don't include Airflow in the main `docker-compose.yaml` file, as Airflow is used for ETL pipelines and not technically a part of this MLops back-end demo. However I still build this for the sake of completeness.
 ```bash
-# add -d flag to run in detach mode, not recommended for first time running
+# if you are using a Linux distro, run prepare_airflow.sh first. If not, skip this step
+./prepare_airflow.sh
+
+# add -d flag to run in detach mode
 docker-compose --file docker-compose-airflow.yaml up
 ```
 
-3. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the `training/data` folder). I do not upload these files to Github as they are (supposely) confidential.
+2. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the `training/data` folder). I do not upload these files to Github as they are (supposely) confidential.
+```bash
+cp .env.example .env
+```
 
-4. To prepare data and train model, run:
+3. To prepare data and train model, run:
 
 ```bash
 cd training
 python preprocess.py && python train.py
 ```
 
-5. Access the services with:
+4. Access the services with:
     - API docs: [localhost:8000/documentation](http://localhost:8000/documentation)
     - MLFlow: [localhost:5000](http://localhost:5000)
     - Prometheus: [localhost:9090](http://localhost:9090)
-    - Grafana: [localhost:3000](http://localhost:3000)
-    - Airflow Webserver: [localhost:8080](http://localhost:8080)
+    - Grafana: [localhost:3000](http://localhost:3000) with username==`admin` and password==`pass@123`
+    - Airflow Webserver: [localhost:8080](http://localhost:8080) with username==`airflow` and password==`airflow`
 
 ### System architecture
 
-[Insert picture here]
+The backend system looks something like this:
+
+![ML Backend](./.assets/pod_foods_quantity_prediction_ml_back-end.png)
 
 ### API documentation
 
@@ -123,16 +133,19 @@ curl -X 'POST' \
 ```
 
 
-### Model development
+### Model training
 
-### Model registry
+Code and specifications related to model training and development are in 
 
-MLflow
-```
-mlflow server --backend-store-uri=sqlite:///artifacts.db --default-artifact-root=file:training/mlruns --host 0.0.0.0 --port 5000
-```
+#### Model registry
 
-Feast
+MLFlow UI: [localhost:5000](http://localhost:5000).
+
+MLFLow is used for experiment tracking and as a model store.
+
+#### Model development
+
+
 
 ### ETL
 
@@ -146,6 +159,8 @@ Airflow
 
 ### Monitoring
 
+- Prometheus: [localhost:9090](http://localhost:9090)
+- Grafana: [localhost:3000](http://localhost:3000) with username==`admin` and password==`pass@123`
 
 ### Testing
 
@@ -156,7 +171,7 @@ Airflow
 - [x] Dockerize  
 - [x] Add MLflow  
 - [x] Add MySQL  
-- [ ] Add Airflow  
+- [X] Add Airflow  
 - [ ] Add quality-of-life features:    
     - [ ] Automatically add datasource and dashboard for Grafana at build  
     - [ ] Feature store (Feast)  
