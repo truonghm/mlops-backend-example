@@ -80,7 +80,7 @@ docker-compose --file docker-compose-airflow.yaml up
 cd training
 python preprocess.py && python train.py
 ```
-Note that the model is not available in this repository (git-ignored), so you have to transform data and train the model for it to be available in the API service.
+Note that the model is not available in this repository (git-ignored), so you have to go through the step above for it to be available in the API service.
 
 4. Access the services with:
     - API docs: [localhost:8000/documentation](http://localhost:8000/documentation)
@@ -88,6 +88,16 @@ Note that the model is not available in this repository (git-ignored), so you ha
     - Prometheus: [localhost:9090](http://localhost:9090). Also visit [localhost:8000/metrics](http://127.0.0.1:8000/metrics) to see which metrics are being tracked.
     - Grafana: [localhost:3000](http://localhost:3000) with username==`admin` and password==`pass@123`
     - Airflow Webserver: [localhost:8080](http://localhost:8080) with username==`airflow` and password==`airflow`
+
+5. Play around and explore! For more details on each part of the demo, please go to the corresponding sections below: 
+
+  + [System architecture](#system-architecture)
+  + [API documentation](#api-documentation)
+  + [Model training](#model-training)
+  + [ETL](#etl)
+  + [Monitoring](#monitoring)
+  + [Testing](#testing)
+
 
 ### System architecture
 
@@ -218,7 +228,7 @@ Data are stored on a MySQL database (`mysql:3306`) with the following tables:
 - `fact_order_items`, corresponds with the `data_order.csv` file
 - `dim_product`, corresponds with the `data_metadata_product.csv` file
 - `dim_store`, corresponds with the `data_metadata_store.csv` file
-- `features`, featurse after transformation
+- `features`, features after transformation
 
 ### Monitoring
 
