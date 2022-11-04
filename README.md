@@ -11,6 +11,7 @@
     + [ETL](#etl)
     + [Monitoring](#monitoring)
     + [Testing](#testing)
+    * [Termination](#termination)
   * [Task list](#task-list)
 
 ## Setting up
@@ -60,7 +61,7 @@ docker-compose --file docker-compose.yaml up
 ```
 
 __Alternatively__, use `docker-compose-airflow.yaml` to include Airflow in the serivces.
-Note that I don't include Airflow in the main `docker-compose.yaml` file (reason below), however I still build this for the sake of completeness.
+Note that I don't include Airflow in the main `docker-compose.yaml` file ([reason below](#etl)), however I still build it for the sake of completeness.
 ```bash
 # if you are using a Linux distro, run prepare_airflow.sh first. If not, skip this step
 ./prepare_airflow.sh
@@ -78,6 +79,7 @@ docker-compose --file docker-compose-airflow.yaml up
 cd training
 python preprocess.py && python train.py
 ```
+Note that the model is not available in this repository (git-ignored), so you have to transform data and train the model for it to be available in the API service.
 
 4. Access the services with:
     - API docs: [localhost:8000/documentation](http://localhost:8000/documentation)
@@ -109,12 +111,12 @@ The backend system looks something like this:
 
 #### Body Parameters
 
-| Parameter        | Detail                          | Type    | Required? |
-| ---------------- | ------------------------------- | ------- | --------- |
-| input            | List of store and product pairs | list    | Yes       |
-| input.store_id   | ID of store                     | integer | Yes       |
-| input.product_id | ID of product                   | integer | Yes       |
-| date             | Check out date                  | string  | No        |
+| Parameter           | Detail                          | Type    | Required? |
+| ------------------- | ------------------------------- | ------- | --------- |
+| input               | List of store and product pairs | list    | Yes       |
+| input[0].store_id   | ID of store                     | integer | Yes       |
+| input[0].product_id | ID of product                   | integer | Yes       |
+| date                | Check out date                  | string  | No        |
 
 #### Example Requests
 
@@ -222,6 +224,20 @@ Data are stored on a MySQL database (`mysql:3306`) with the following tables:
 
 ### Testing
 
+## Termination
+
+To shutdown the containers and remove all volumes:
+
+```bash
+docker-compose down -v
+```
+
+To remove unused images
+
+```bash
+docker image prune -a
+```
+
 
 ## Task list
 
@@ -236,5 +252,5 @@ Data are stored on a MySQL database (`mysql:3306`) with the following tables:
     - [ ] Testing  
 - [ ] Write documentation  
     - [X] Set-up and how-to-use  
-    - [ ] Doc for API endpoint  
+    - [X] Doc for API endpoint  
     - [X] System architecture  
