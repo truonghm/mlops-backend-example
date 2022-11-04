@@ -32,6 +32,10 @@ pip install -r requirements.txt
 ```
 
 4. Create the environment variable file: Simply rename the `.env.example` file to `.env`. 
+```bash
+cp .env.example .env
+```
+
 
 ## Usage
 
@@ -53,10 +57,8 @@ Note that I don't include Airflow in the main `docker-compose.yaml` file (reason
 docker-compose --file docker-compose-airflow.yaml up
 ```
 
-2. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the `training/data` folder). I do not upload these files to Github as they are (supposely) confidential.
-```bash
-cp .env.example .env
-```
+2. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the [`training/data`](training/data) folder). I do not upload these files to Github as they are (supposely) confidential.
+
 
 3. To prepare data and train model, run:
 
