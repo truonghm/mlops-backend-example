@@ -1,5 +1,17 @@
 # Back-end Demo for Quantity Prediction Model (Pod Foods)
 
+## Table of Content
+  * [Setting up](#setting-up)
+    + [Prerequisites](#prerequisites)
+    + [Installation](#installation)
+  * [Usage](#usage)
+    + [System architecture](#system-architecture)
+    + [API documentation](#api-documentation)
+    + [Model training](#model-training)
+    + [ETL](#etl)
+    + [Monitoring](#monitoring)
+    + [Testing](#testing)
+  * [Task list](#task-list)
 
 ## Setting up
 
