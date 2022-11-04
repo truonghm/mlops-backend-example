@@ -84,7 +84,7 @@ Note that the model is not available in this repository (git-ignored), so you ha
 4. Access the services with:
     - API docs: [localhost:8000/documentation](http://localhost:8000/documentation)
     - MLFlow: [localhost:5000](http://localhost:5000)
-    - Prometheus: [localhost:9090](http://localhost:9090)
+    - Prometheus: [localhost:9090](http://localhost:9090). Also visit [localhost:8000/metrics](http://127.0.0.1:8000/metrics) to see which metrics are being tracked.
     - Grafana: [localhost:3000](http://localhost:3000) with username==`admin` and password==`pass@123`
     - Airflow Webserver: [localhost:8080](http://localhost:8080) with username==`airflow` and password==`airflow`
 
@@ -200,8 +200,8 @@ I don't include Airflow in the main backend services due to:
 - Complexity
 - I want to focus more on the ML size of things while Airflow is for orchestration.
 
-As such, use `docker-compose-airflow.yaml` to include Airflow in the serivces.
-Note that for Linux distributions, the `AIRFLOW_UID` and `AIRFLOW_GID` environment variables need to be specified with the correct values in order for Airflow to have the correct permissions. 
+As such, please use `docker-compose-airflow.yaml` if you also want to include Airflow in the serivces.
+Note that for Linux distributions, the `AIRFLOW_UID` environment variable need to be specified with the correct value in order for Airflow to have the correct permissions. 
 
 ```bash
 # if you are using a Linux distro, run prepare_airflow.sh first. If not, skip this step
@@ -212,7 +212,7 @@ docker-compose --file docker-compose-airflow.yaml up
 ```
 
 Data are stored on a MySQL database (`mysql:3306`) with the following tables:
-- `fact_order_item`, corresponds with the `data_order.csv` file
+- `fact_order_items`, corresponds with the `data_order.csv` file
 - `dim_product`, corresponds with the `data_metadata_product.csv` file
 - `dim_store`, corresponds with the `data_metadata_store.csv` file
 - `features`, featurse after transformation
@@ -222,7 +222,13 @@ Data are stored on a MySQL database (`mysql:3306`) with the following tables:
 - Prometheus: [localhost:9090](http://localhost:9090)
 - Grafana: [localhost:3000](http://localhost:3000) with username==`admin` and password==`pass@123`
 
+Note that due to limited time, I only use the stock dashboard (from [here](https://github.com/Kludex/fastapi-prometheus-grafana)) in Grafana with some setting modification. Given more time, a better dashboard that show tailor-made metrics for the model can be built.
+
+The dashboard has already been loaded into Grafana after running Docker Compose. Please go to __Dashboard > Browse > FastAPI Dashboard__ to view the dashboard.
+
 ### Testing
+
+Due to the limited time allowed for this demo, I don't have time to set up testing for the backend services.
 
 ## Termination
 
@@ -238,19 +244,18 @@ To remove unused images
 docker image prune -a
 ```
 
-
 ## Task list
 
 - [x] Build skeleton (FastAPI + Grafana + Prometheus)  
-- [x] Dockerize  
+- [x] Containerize  
 - [x] Add MLflow  
 - [x] Add MySQL  
 - [X] Add Airflow  
 - [ ] Add quality-of-life features:    
-    - [ ] Automatically add datasource and dashboard for Grafana at build  
-    - [ ] Feature store (Feast)  
-    - [ ] Testing  
-- [ ] Write documentation  
+    - [X] Automatically add datasource and dashboard for Grafana at build  
+    - [ ] Feature store (Feast) -> Not available due to limited time
+    - [ ] Testing -> Not available due to limited time
+- [X] Write documentation  
     - [X] Set-up and how-to-use  
     - [X] Doc for API endpoint  
     - [X] System architecture  
