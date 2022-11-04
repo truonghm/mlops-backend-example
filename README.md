@@ -11,7 +11,7 @@
     + [ETL](#etl)
     + [Monitoring](#monitoring)
     + [Testing](#testing)
-    * [Termination](#termination)
+  * [Termination](#termination)
   * [Task list](#task-list)
 
 ## Setting up
