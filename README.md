@@ -1,4 +1,4 @@
-# Back-end Demo for Quantity Prediction Model (Pod Foods)
+# PodFoods ML Backend Demo
 
 ## Table of Content
   * [Setting up](#setting-up)
