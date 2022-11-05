@@ -1,7 +1,16 @@
+# Project-specific files
+database/*
+serving/app/modules/test_model/
+training/artifacts/*
+training/test_*.*
+training/data/*.csv
+training/predict.py
+test/*
+etl/logs/*
+etl/keys/*
+etl/plugins/*
+
 # Byte-compiled / optimized / DLL files
-model/train/data/
-model/app/modules/test_model/
-model/artifacts/test_*.joblib
 __pycache__/
 *.py[cod]
 *$py.class
