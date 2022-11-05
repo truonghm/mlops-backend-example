@@ -60,14 +60,16 @@ async def predict(request: schemas.QuantityPredictionRequest):
     features = pd.read_sql(query, engine)
     # print(features.info())
     features.drop(['id','created_at', 'quantity', 'checkout_date'], axis=1, inplace=True)
+    res = features[['store_id', 'product_id']].copy(deep=True)
 
     lb = LabelEncoder()
     features['store_type'] = lb.fit_transform(features['store_type'])
     features['cate'] = lb.fit_transform(features['cate'])
     features['sub_cate'] = lb.fit_transform(features['sub_cate'])
 
-    res = np.ceil(model.predict(features.astype(np.float32)))
+    res['quantity_predict'] = np.ceil(model.predict(features.astype(np.float32)))
 
+    print(res.to_dict('records'))
     return schemas.QuantityPredictionReponse(
-        predictions=res.tolist(),
+        prediction_output=res.to_dict('records'),
     )

@@ -159,12 +159,19 @@ curl -X 'POST' \
 
 ```
 {
-  "predictions": [
-    2,
-    3
+  "prediction_output": [
+    {
+      "store_id": 55,
+      "product_id": 1867,
+      "quantity_predict": 3
+    },
+    {
+      "store_id": 55,
+      "product_id": 1867,
+      "quantity_predict": 3
+    }
   ]
 }
-
 ```
 
 
