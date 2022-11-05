@@ -9,6 +9,7 @@ from mlflow.tracking import MlflowClient
 import pandas as pd
 from sqlalchemy import text
 from sklearn.preprocessing import LabelEncoder
+import datetime
 
 from app.base.config import settings
 from app.base.db import SessionLocal, engine
@@ -58,16 +59,27 @@ async def predict(request: schemas.QuantityPredictionRequest):
     """
 
     features = pd.read_sql(query, engine)
+
+    if len(features) == 0:
+        return {"prediction_output":[]}
+        
+    res = features[['store_id', 'product_id', 'checkout_date']].copy(deep=True)
     # print(features.info())
     features.drop(['id','created_at', 'quantity', 'checkout_date'], axis=1, inplace=True)
-    res = features[['store_id', 'product_id']].copy(deep=True)
+    
+    res['checkout_date'] = pd.to_datetime(res['checkout_date'], format="%Y-%m-%d")
 
+    today = datetime.datetime.today()
     lb = LabelEncoder()
     features['store_type'] = lb.fit_transform(features['store_type'])
     features['cate'] = lb.fit_transform(features['cate'])
     features['sub_cate'] = lb.fit_transform(features['sub_cate'])
 
-    res['quantity_predict'] = np.ceil(model.predict(features.astype(np.float32)))
+    res['quantity_pred'] = np.ceil(model.predict(features.astype(np.float32)))
+    res['checkout_date_pred'] = res['checkout_date'].dt.year.astype(str) + str(today.month).zfill(2) + res['checkout_date'].dt.day.astype(str).str.zfill(2)
+
+    res = res[pd.to_datetime(res['checkout_date_pred'], format="%Y%m%d") >= today]
+    res.drop(columns=['checkout_date'], inplace=True)
 
     print(res.to_dict('records'))
     return schemas.QuantityPredictionReponse(

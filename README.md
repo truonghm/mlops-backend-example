@@ -163,12 +163,8 @@ curl -X 'POST' \
     {
       "store_id": 55,
       "product_id": 1867,
-      "quantity_predict": 3
-    },
-    {
-      "store_id": 55,
-      "product_id": 1867,
-      "quantity_predict": 3
+      "quantity_pred": 3,
+      "checkout_date_pred": 20221109
     }
   ]
 }
@@ -176,6 +172,11 @@ curl -X 'POST' \
 
 
 ### Model training
+
+Change directory to the [`training`](./training/) folder:
+```bash
+cd training
+```
 
 Folder structure:
 
@@ -192,6 +193,7 @@ training
 ├── preprocess.py
 ├── train.py
 ```
+
 To transform data and save it to database:
 ```bash
 python preprocess.py
