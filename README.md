@@ -1,4 +1,4 @@
-# PodFoods ML Backend Demo
+# MLOps Backend Demo
 
 ## Table of Content
   * [Setting up](#setting-up)
@@ -29,15 +29,15 @@ You will need:
 
 1. Clone this repository:
 ```
-git clone git@github.com:truonghm/pf-backend.git
-cd pf-backend
+git clone git@github.com:truonghm/mlops-backend-example.git
+cd mlops-backend-example
 ```
 
 2. Create a new Python environment for isolation. If you use `conda`, you can run:
 
 ```
-conda create --name pf python=3.8
-conda activate pf
+conda create --name py38 python=3.8
+conda activate py38
 ```
 
 3. Next, install the neccessary packages:
@@ -71,7 +71,7 @@ Note that I don't include Airflow in the main `docker-compose.yaml` file ([reaso
 docker-compose --file docker-compose-airflow.yaml up
 ```
 
-2. Copy the raw data (3 csv files, `data_metadata_product.csv`, `data_metadata_store.csv`, `data_order.csv` into the [`training/data`](training/data) folder). I do not upload these files to Github as they are (supposely) confidential.
+2. Copy the raw data into the [`training/data`](training/data) folder.
 
 
 3. To prepare data and train model, run:
@@ -103,7 +103,7 @@ Note that the model is not available in this repository (git-ignored), so you ha
 
 The backend system looks something like this:
 
-![ML Backend](./.assets/pod_foods_quantity_prediction_ml_back-end.png)
+![ML Backend](./.assets/quantity_prediction_ml_back-end.png)
 
 ### API documentation
 
@@ -204,8 +204,6 @@ To train the model:
 python train.py
 ```
 
-There is also the Jupyter Notebook with more details on model development at [`training/dev/model.ipynb`](training/dev/model.ipynb).
-
 #### Model registry
 
 MLFlow UI: [localhost:5000](http://localhost:5000).
@@ -233,18 +231,10 @@ docker-compose --file docker-compose-airflow.yaml up
 
 The is one task available in Airflow: `dag_quantity_model_preprocessing`. The transformation is done in Python (pandas).
 
-Data are stored on a MySQL database (`mysql:3306`) with the following tables:
-- `fact_order_items`, corresponds with the `data_order.csv` file
-- `dim_product`, corresponds with the `data_metadata_product.csv` file
-- `dim_store`, corresponds with the `data_metadata_store.csv` file
-- `features`, features after transformation
-
 ### Monitoring
 
 - Prometheus: [localhost:9090](http://localhost:9090)
 - Grafana: [localhost:3000](http://localhost:3000) with username==`admin` and password==`pass@123`
-
-Note that due to limited time, I only use the stock dashboard (from [here](https://github.com/Kludex/fastapi-prometheus-grafana)) in Grafana with some setting modification. Given more time, a better dashboard that show tailor-made metrics for the model can be built.
 
 The dashboard has already been loaded into Grafana after running Docker Compose. Please go to __Dashboard > Browse > FastAPI Dashboard__ to view the dashboard.
 
@@ -252,7 +242,7 @@ The dashboard has already been loaded into Grafana after running Docker Compose.
 
 ### Testing
 
-Due to the limited time allowed for this demo, I don't have time to set up testing for the backend services.
+To be updated.
 
 ## Termination
 
@@ -285,8 +275,8 @@ docker image prune -a
 - [X] Add Airflow  
 - [ ] Add quality-of-life features:    
     - [X] Automatically add datasource and dashboard for Grafana at build  
-    - [ ] Feature store (Feast) -> Not available due to limited time
-    - [ ] Testing -> Not available due to limited time
+    - [ ] Feature store (Feast)
+    - [ ] Testing
 - [X] Write documentation  
     - [X] Set-up and how-to-use  
     - [X] Doc for API endpoint  
