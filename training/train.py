@@ -54,7 +54,7 @@ def train():
 					early_stopping_rounds=50,
 					verbose=False)
 
-			model_uri = mlflow.sklearn.log_model(model, registered_model_name='PF_Quantity_Prediction', artifact_path="").model_uri
+			model_uri = mlflow.sklearn.log_model(model, registered_model_name='Quantity_Prediction', artifact_path="").model_uri
 
 			print("MODEL URI:", model_uri)
 

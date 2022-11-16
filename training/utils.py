@@ -10,8 +10,6 @@ import os
 # from dotenv import load_dotenv
 # load_dotenv(dotenv_path="local.env")
 
-# connection_string = "sqlite:///database/podfood.db"
-
 DATA_PATH = "data/"
 connection_string = f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PWD')}@{os.getenv('MYSQL_HOST')}:{os.getenv('MYSQL_PORT')}/{os.getenv('MYSQL_DB')}"
 

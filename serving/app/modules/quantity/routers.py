@@ -33,7 +33,7 @@ async def get_all_tables():
     query = """
     SELECT COLUMN_NAME
     FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_SCHEMA = 'podfoods' 
+    WHERE TABLE_SCHEMA = 'mlops' 
     AND TABLE_NAME = 'features'
     AND COLUMN_NAME not in ('id', 'created_at')
     """
@@ -46,7 +46,7 @@ async def get_all_tables():
 
 @router.post("/predict")
 async def predict(request: schemas.QuantityPredictionRequest):
-    model_name = "PF_Quantity_Prediction"
+    model_name = "Quantity_Prediction"
     # Fetch the last model in production
     model = mlflow.sklearn.load_model(
         model_uri=f"models:/{model_name}/latest"

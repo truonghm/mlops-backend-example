@@ -26,8 +26,8 @@ def init_listeners(app: FastAPI) -> None:
         )
 
 app = FastAPI(
-    title="Pod Foods ML APIs",
-    description="APIs for ML products of Pod Foods",
+    title="ML APIs",
+    description="APIs for ML products",
     version="0.0.1",
     docs_url="/documentation",
     redoc_url="/redoc",
