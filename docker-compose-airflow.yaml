@@ -23,8 +23,7 @@ x-airflow-common:
   depends_on:
     postgres:
       condition: service_healthy
-  networks:
-    pf-backend:
+
 
 services:
   postgres:
@@ -42,8 +41,7 @@ services:
       interval: 5s
       retries: 5
     restart: always
-    networks:
-      pf-backend:
+
 
   airflow-webserver:
     <<: *airflow-common
@@ -83,14 +81,13 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://0.0.0.0:8000"]
     volumes:
-      - ./training/artifacts:/pf/artifacts/
+      - ./training/artifacts:/mlops/artifacts/
     depends_on:
       mlflow:
         condition: service_started
       mysql:
         condition: service_started
-    networks:
-      pf-backend:
+
 
   prometheus:
     image: prom/prometheus:latest
@@ -107,8 +104,7 @@ services:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-    networks:
-      pf-backend:
+
 
   grafana:
     image: grafana/grafana:latest
@@ -124,8 +120,7 @@ services:
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards/
     env_file:
       - ./monitoring/grafana/config.monitoring
-    networks:
-      pf-backend:
+
 
   mysql:
     image: mysql:8.0
@@ -135,8 +130,7 @@ services:
     container_name: mysql
     ports:
       - "3306:3306"
-    networks:
-      pf-backend:
+
     healthcheck:
         test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
         timeout: 20s
@@ -167,8 +161,7 @@ services:
         condition: service_healthy
     command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri mysql+pymysql://${MYSQL_MLFLOW_USER}:${MYSQL_MLFLOW_PWD}@mysql_mlflow:3306/${MYSQL_MLFLOW_DB} --default-artifact-root ${MLFLOW_ARTIFACT_ROOT}
     # command: mlflow server --backend-store-uri=sqlite:///artifacts.db --default-artifact-root=file:training/artifacts --host 0.0.0.0 --port 5000
-    networks:
-      pf-backend:
+
 
   mysql_mlflow:
     image: mysql:8.0
@@ -191,14 +184,9 @@ services:
       - mysql_mlflow_db:/var/lib/mysql
     cap_add:
       - SYS_NICE
-    networks:
-      pf-backend:
+
 
 volumes:
   mysql_db:
   mysql_mlflow_db:
   postgres-db-volume:
-
-networks:
-  pf-backend:
-    driver: bridge

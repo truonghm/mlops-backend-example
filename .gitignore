@@ -9,6 +9,7 @@ test/*
 etl/logs/*
 etl/keys/*
 etl/plugins/*
+archives/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
